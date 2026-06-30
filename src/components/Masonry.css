@@ -1,0 +1,18 @@
+.list {
+    position: relative;
+    width: 100%;
+}
+
+.item-wrapper {
+    position: absolute;
+    will-change: transform, width, height, opacity;
+    padding: 8px;
+    /* Gap between items */
+    top: 0;
+    left: 0;
+}
+
+.item-content-wrapper {
+    overflow: hidden;
+    position: relative;
+}
