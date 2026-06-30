@@ -7,7 +7,7 @@ import { ReactLenis } from 'lenis/react';
 
 function App() {
   return (
-    <BrowserRouter basename="/Portfolio">
+    <BrowserRouter basename={import.meta.env.BASE_URL}>
       <Routes>
         <Route path="/" element={
           <ReactLenis root>
