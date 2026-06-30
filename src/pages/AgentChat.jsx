@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, Send, Settings, Bot, User, Key, Sparkles, Trash2 } from "lucide-react";
+import { ArrowLeft, Send, Bot, User, Sparkles, Trash2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import Groq from "groq-sdk";
 
@@ -114,9 +114,7 @@ Rules:
 `;
 
 // 🔒 SECURITY CONSTANTS
-// TODO: Replace these with your actual values
 const PERMANENT_API_KEY = import.meta.env.VITE_GROQ_API_KEY || ""; // Loaded from environment variables
-const ADMIN_PASSWORD = ""; // Password to unlock API settings
 
 
 export default function AgentChat() {
@@ -127,16 +125,7 @@ export default function AgentChat() {
 
     // API Key State
     const [apiKey, setApiKey] = useState("");
-
-    // Settings & Security State
-    const [isSettingsOpen, setIsSettingsOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-
-    // Unlock State
-    const [isUnlocked, setIsUnlocked] = useState(false); // True if admin password was entered
-    const [showPasswordInput, setShowPasswordInput] = useState(false); // Toggle for password field
-    const [adminPasswordInput, setAdminPasswordInput] = useState(""); // Input value for password
-    const [errorMsg, setErrorMsg] = useState("");
 
     const messagesEndRef = useRef(null);
 
@@ -144,12 +133,8 @@ export default function AgentChat() {
         const storedKey = localStorage.getItem("groq_api_key");
         if (storedKey) {
             setApiKey(storedKey);
-        } else if (PERMANENT_API_KEY && PERMANENT_API_KEY !== "gsk_put_your_permanent_key_here") {
-            // Use permanent key if no local key (and it's not the placeholder)
+        } else if (PERMANENT_API_KEY) {
             setApiKey(PERMANENT_API_KEY);
-        } else {
-            // Only open settings if NO key is available at all
-            setIsSettingsOpen(true);
         }
     }, []);
 
@@ -157,11 +142,7 @@ export default function AgentChat() {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages]);
 
-    const handleSaveKey = (key) => {
-        setApiKey(key);
-        localStorage.setItem("groq_api_key", key);
-        setIsSettingsOpen(false);
-    };
+
 
     const handleSendMessage = async (e) => {
         e.preventDefault();
@@ -231,7 +212,6 @@ export default function AgentChat() {
         } catch (error) {
             console.error("Api Error:", error);
             setMessages((prev) => [...prev, { role: "assistant", content: `Error: ${error.message}. Please check your API key.` }]);
-            setIsSettingsOpen(true);
             setIsLoading(false);
         }
     };
@@ -266,21 +246,23 @@ export default function AgentChat() {
                     </div>
                 </div>
 
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-4">
                     <button
                         onClick={handleClearChat}
-                        className="p-2 text-zinc-400 hover:text-red-400 transition-colors"
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm text-zinc-400 hover:text-red-400 hover:bg-white/5 transition-all"
                         title="Clear Chat"
                     >
                         <Trash2 className="w-4 h-4" />
+                        <span className="hidden sm:inline text-xs">Clear</span>
                     </button>
-                    <button
-                        onClick={() => setIsSettingsOpen(true)}
-                        className="p-2 text-zinc-400 hover:text-white transition-colors"
-                        title="API Settings"
-                    >
-                        <Settings className="w-4 h-4" />
-                    </button>
+                    <div className="h-4 w-[1px] bg-white/10" />
+                    <div className="flex items-center gap-2 text-xs text-zinc-400 bg-white/5 border border-white/10 px-3 py-1.5 rounded-full">
+                        <span className="relative flex h-2 w-2">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                            <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+                        </span>
+                        <span className="font-mono tracking-wider text-[10px]">SYS_ONLINE</span>
+                    </div>
                 </div>
             </header>
 
@@ -346,148 +328,6 @@ export default function AgentChat() {
                 </div>
             </div>
 
-            {/* API Key Modal */}
-            <AnimatePresence>
-                {isSettingsOpen && (
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
-                    >
-                        <motion.div
-                            initial={{ scale: 0.95, y: 20 }}
-                            animate={{ scale: 1, y: 0 }}
-                            exit={{ scale: 0.95, y: 20 }}
-                            className="bg-[#09090b] border border-white/10 rounded-2xl p-6 w-full max-w-md shadow-2xl relative overflow-hidden"
-                        >
-                            <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-red-500 to-purple-500" />
-
-                            <div className="flex items-center gap-3 mb-4">
-                                <div className="p-2 bg-red-500/10 rounded-full text-red-500">
-                                    <Key className="w-5 h-5" />
-                                </div>
-                                <h3 className="text-xl font-bold text-white">API Key</h3>
-                            </div>
-
-                            <form onSubmit={(e) => { e.preventDefault(); handleSaveKey(apiKey); }}>
-                                {isUnlocked ? (
-                                    // 🔓 ADMIN VIEW: Editable API Key
-                                    <div className="space-y-4">
-                                        <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
-                                            <p className="text-xs text-red-400 font-medium">⚠️ Admin Mode Active</p>
-                                            <p className="text-xs text-zinc-400 mt-1">You are editing the local API key overrides.</p>
-                                        </div>
-                                        <div>
-                                            <label className="text-xs uppercase text-zinc-500 font-bold tracking-wider mb-2 block">Your API Key</label>
-                                            <input
-                                                type="password"
-                                                value={apiKey}
-                                                onChange={(e) => setApiKey(e.target.value)}
-                                                placeholder="gsk_..."
-                                                className="w-full bg-zinc-900 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-red-500/50 transition-colors"
-                                            />
-                                        </div>
-                                        <div className="flex justify-end gap-2 mt-4">
-                                            <button
-                                                type="button"
-                                                onClick={() => setIsSettingsOpen(false)}
-                                                className="px-4 py-2 text-sm text-zinc-400 hover:text-white transition-colors"
-                                            >
-                                                Done
-                                            </button>
-                                            <button
-                                                type="submit"
-                                                className="px-4 py-2 text-sm bg-zinc-100 text-black hover:bg-white rounded-lg font-medium transition-colors"
-                                            >
-                                                Save Local Key
-                                            </button>
-                                        </div>
-                                    </div>
-                                ) : (
-                                    // 🔒 LOCKED VIEW
-                                    <div className="space-y-4">
-                                        {!showPasswordInput ? (
-                                            <div className="text-center py-4">
-                                                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-500/10 text-green-500 text-sm font-medium mb-4">
-                                                    <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                                                    Agent Configured
-                                                </div>
-                                                <p className="text-sm text-zinc-500 mb-6">
-                                                    The agent is ready to use with the shared configuration. <br />
-                                                    Do you need to modify the system access?
-                                                </p>
-                                                <div className="flex justify-center gap-3">
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => setIsSettingsOpen(false)}
-                                                        className="px-6 py-2.5 bg-zinc-100/10 hover:bg-zinc-100/20 text-white rounded-lg font-medium transition-all"
-                                                    >
-                                                        Continue to Chat
-                                                    </button>
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => setShowPasswordInput(true)}
-                                                        className="px-4 py-2.5 text-sm text-zinc-400 hover:text-red-400 transition-colors underline decoration-dotted underline-offset-4"
-                                                    >
-                                                        Edit API Key
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        ) : (
-                                            // 🔑 PASSWORD CHALLENGE
-                                            <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
-                                                <label className="text-xs uppercase text-zinc-500 font-bold tracking-wider mb-2 block">Admin Password</label>
-                                                <input
-                                                    type="password"
-                                                    value={adminPasswordInput}
-                                                    onChange={(e) => {
-                                                        setAdminPasswordInput(e.target.value);
-                                                        setErrorMsg("");
-                                                    }}
-                                                    placeholder="Enter password..."
-                                                    className="w-full bg-zinc-900 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-red-500/50 transition-colors"
-                                                    autoFocus
-                                                />
-                                                {errorMsg && <p className="text-xs text-red-500 mt-2">{errorMsg}</p>}
-
-                                                <div className="flex justify-between items-center mt-4">
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => {
-                                                            setShowPasswordInput(false);
-                                                            setAdminPasswordInput("");
-                                                            setErrorMsg("");
-                                                        }}
-                                                        className="text-sm text-zinc-500 hover:text-zinc-300 transition-colors"
-                                                    >
-                                                        Back
-                                                    </button>
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => {
-                                                            if (adminPasswordInput === ADMIN_PASSWORD) {
-                                                                setIsUnlocked(true);
-                                                                setShowPasswordInput(false);
-                                                                setAdminPasswordInput("");
-                                                            } else {
-                                                                setErrorMsg("Incorrect password");
-                                                            }
-                                                        }}
-                                                        className="px-4 py-2 text-sm bg-red-600 text-white hover:bg-red-500 rounded-lg font-medium transition-colors"
-                                                    >
-                                                        Unlock Settings
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        )}
-                                    </div>
-                                )}
-                            </form>
-                        </motion.div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
         </div>
     );
 }
