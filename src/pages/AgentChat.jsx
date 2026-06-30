@@ -154,6 +154,16 @@ export default function AgentChat() {
         } else if (PERMANENT_API_KEY) {
             setApiKey(PERMANENT_API_KEY);
         }
+
+        // Lock body/html scroll on mobile to keep header and chat input 100% fixed
+        document.documentElement.style.overflow = "hidden";
+        document.body.style.overflow = "hidden";
+
+        return () => {
+            // Restore body/html scroll when leaving the chat page
+            document.documentElement.style.overflow = "";
+            document.body.style.overflow = "";
+        };
     }, []);
 
     useEffect(() => {
@@ -251,7 +261,7 @@ export default function AgentChat() {
             </div>
 
             {/* Header */}
-            <header className="relative z-10 shrink-0 grid grid-cols-3 items-center px-6 py-4 border-b border-white/5 bg-black/50 backdrop-blur-md">
+            <header className="relative z-10 shrink-0 flex justify-between items-center md:grid md:grid-cols-3 md:items-center px-4 md:px-6 py-4 border-b border-white/5 bg-black/50 backdrop-blur-md">
                 <div className="flex justify-start">
                     <Link
                         to="/"
@@ -263,7 +273,7 @@ export default function AgentChat() {
                     </Link>
                 </div>
 
-                <div className="flex justify-center">
+                <div className="hidden md:flex justify-center">
                     <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 shadow-inner">
                         <Bot className="w-4 h-4 text-red-400 animate-pulse" />
                         <span className="text-sm font-medium tracking-wide">D.A.M.N.</span>
