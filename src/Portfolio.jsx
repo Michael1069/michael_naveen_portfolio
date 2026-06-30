@@ -143,12 +143,12 @@ export default function Portfolio() {
           initial={{ y: -100, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-          className="pointer-events-auto flex items-center gap-2 p-1.5 rounded-full border border-white/10 bg-black/50 backdrop-blur-xl shadow-2xl shadow-black/50"
+          className="pointer-events-auto flex items-center gap-0.5 sm:gap-2 p-1 rounded-full border border-white/10 bg-black/60 backdrop-blur-xl shadow-2xl shadow-black/50"
         >
 
           {/* Links */}
           <div
-            className="hidden md:flex items-center"
+            className="flex items-center"
             onMouseLeave={() => setHoveredTab(null)}
           >
             {nav.map((n) => (
@@ -156,7 +156,7 @@ export default function Portfolio() {
                 key={n.href}
                 href={n.href}
                 onMouseEnter={() => setHoveredTab(n.href)}
-                className={`relative px-4 py-2 text-sm transition-colors duration-300 ${hoveredTab === n.href ? "text-black font-medium" : "text-zinc-400 hover:text-white"
+                className={`relative px-2 py-1.5 sm:px-4 sm:py-2 text-[11px] sm:text-sm transition-colors duration-300 ${hoveredTab === n.href ? "text-black font-medium" : "text-zinc-400 hover:text-white"
                   }`}
               >
                 {hoveredTab === n.href && (
@@ -175,9 +175,13 @@ export default function Portfolio() {
             ))}
           </div>
 
-          {/* Mobile Menu Icon (Placeholder for now) */}
-          <Link to="/agent" className="ml-2 px-5 py-2.5 rounded-full bg-zinc-100 hover:bg-white text-black text-sm font-medium transition-colors shadow-[0_0_20px_rgba(255,255,255,0.1)] flex items-center gap-2">
-            Try My Agent <Bot className="w-3.5 h-3.5" />
+          <Link 
+            to="/agent" 
+            className="ml-1 sm:ml-2 px-3 py-1.5 sm:px-5 sm:py-2.5 rounded-full bg-zinc-100 hover:bg-white text-black text-[11px] sm:text-sm font-medium transition-colors shadow-[0_0_20px_rgba(255,255,255,0.1)] flex items-center gap-1.5 shrink-0"
+          >
+            <span className="hidden sm:inline">Try My Agent</span>
+            <span className="inline sm:hidden">Agent</span>
+            <Bot className="w-3.5 h-3.5 shrink-0" />
           </Link>
         </motion.div>
       </nav>
@@ -358,14 +362,14 @@ export default function Portfolio() {
                   borderRadius="1.5rem"
                   background="rgba(24, 24, 27, 0.4)"
                   borderColor="rgba(255, 255, 255, 0.1)"
-                  className="group relative backdrop-blur-sm overflow-hidden hover:border-red-500/30 transition-all duration-500 flex flex-col p-8"
+                  className="group relative backdrop-blur-sm overflow-hidden hover:border-red-500/30 transition-all duration-500 flex flex-col p-5 sm:p-8"
                 >
                   {/* Hover Glow */}
                   <div className="absolute inset-0 bg-red-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
 
                   <div className="relative z-10 flex flex-col h-full">
                     <div className="flex items-start justify-between gap-4">
-                      <h3 className="text-2xl font-bold text-white group-hover:text-red-400 transition-colors">
+                      <h3 className="text-xl sm:text-2xl font-bold text-white group-hover:text-red-400 transition-colors">
                         {p.title}
                       </h3>
                       <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0">
@@ -390,13 +394,13 @@ export default function Portfolio() {
                       </div>
                     </div>
 
-                    <p className="mt-4 text-zinc-400 leading-relaxed flex-grow">{p.description}</p>
+                    <p className="mt-3 sm:mt-4 text-xs sm:text-sm md:text-base text-zinc-400 leading-relaxed flex-grow">{p.description}</p>
 
-                    <div className="mt-6 flex flex-wrap gap-2">
+                    <div className="mt-4 sm:mt-6 flex flex-wrap gap-1.5 sm:gap-2">
                       {p.tags.map((t) => (
                         <span
                           key={t}
-                          className="text-xs font-medium px-3 py-1 rounded-full bg-white/5 border border-white/5 text-zinc-300"
+                          className="text-[10px] sm:text-xs font-medium px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full bg-white/5 border border-white/5 text-zinc-300"
                         >
                           {t}
                         </span>
