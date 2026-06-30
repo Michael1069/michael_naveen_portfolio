@@ -242,7 +242,7 @@ export default function AgentChat() {
     };
 
     return (
-        <div className="min-h-screen bg-black text-zinc-100 flex flex-col font-sans selection:bg-red-500/30">
+        <div className="h-screen h-[100dvh] overflow-hidden bg-black text-zinc-100 flex flex-col font-sans selection:bg-red-500/30">
 
             {/* Background Ambience */}
             <div className="fixed inset-0 z-0 pointer-events-none">
@@ -251,7 +251,7 @@ export default function AgentChat() {
             </div>
 
             {/* Header */}
-            <header className="relative z-10 grid grid-cols-3 items-center px-6 py-4 border-b border-white/5 bg-black/50 backdrop-blur-md">
+            <header className="relative z-10 shrink-0 grid grid-cols-3 items-center px-6 py-4 border-b border-white/5 bg-black/50 backdrop-blur-md">
                 <div className="flex justify-start">
                     <Link
                         to="/"
@@ -351,7 +351,7 @@ export default function AgentChat() {
             </div>
 
             {/* Input Area */}
-            <div className="relative z-10 p-4 border-t border-white/5 bg-black/80 backdrop-blur-xl">
+            <div className="relative z-10 shrink-0 p-4 border-t border-white/5 bg-black/80 backdrop-blur-xl">
                 <form onSubmit={handleSendMessage} className="max-w-3xl mx-auto relative flex items-center gap-2">
                     <input
                         type="text"
