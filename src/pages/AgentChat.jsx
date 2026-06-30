@@ -242,7 +242,7 @@ export default function AgentChat() {
     };
 
     return (
-        <div className="h-screen h-[100dvh] overflow-hidden bg-black text-zinc-100 flex flex-col font-sans selection:bg-red-500/30">
+        <div className="fixed inset-0 overflow-hidden bg-black text-zinc-100 flex flex-col font-sans selection:bg-red-500/30">
 
             {/* Background Ambience */}
             <div className="fixed inset-0 z-0 pointer-events-none">
